@@ -1,26 +1,30 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { Routes, Route, Navigate, BrowserRouter } from "react-router-dom";
+import { useMaterialUIController } from './context';
+import routes from "./routes";
+import Dashboard from './layouts/dashboard';
+export default function App(): JSX.Element {
+  const [controller] = useMaterialUIController();
+  const { x } = controller;
+  const getRoutes = (allRoutes: any) =>
+    allRoutes.map((route: any) => {
+      if (route.collapse) {
+        return getRoutes(route.collapse);
+      }
 
-function App() {
+      if (route.route) {
+        return <Route path={route.route} element={route.component} key={route.key} />;
+      }
+
+      return null;
+    });
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <BrowserRouter>
+      <div>
+          <Routes>
+            <Route path="*" element={<Navigate to="/dashboard" />} />
+            {getRoutes(routes)}
+          </Routes>
+      </div>
+    </BrowserRouter>
   );
 }
-
-export default App;
